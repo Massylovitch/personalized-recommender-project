@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "personalized-recommender-project"
+version = "0.1.0"
+description = ""
+authors = ["Massyl GH <massyl-6@hotmail.fr>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "~3.12"
+polars = "^1.31.0"
+ipykernel = "^6.30.0"
+sentence-transformers = "^5.0.0"
+pydantic-settings = "^2.10.1"
+loguru = "^0.7.3"
+hopsworks = "^4.3.1"
+pyarrow = "^21.0.0"
+torch = {version = "^2.7.1+cu128", source = "pytorch-gpu"}
+torchvision = {version = "^0.22.1+cu128", source = "pytorch-gpu"}
+torchaudio = {version = "^2.7.1+cu128", source = "pytorch-gpu"}
+
+
+[[tool.poetry.source]]
+name = "pytorch-gpu"
+url = "https://download.pytorch.org/whl/cu128"
+priority = "explicit"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
