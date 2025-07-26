@@ -1,4 +1,6 @@
 import polars as pl
+from hopsworks import udf
+import numpy as np
 
 
 def compute_features_transactions(df: pl.DataFrame) -> pl.DataFrame:
@@ -19,3 +21,13 @@ def compute_features_transactions(df: pl.DataFrame) -> pl.DataFrame:
         )
         .with_columns([(pl.col("t_dat").cast(pl.Int64) // 1_000_000).alias("t_dat")])
     )
+
+
+@udf(return_type=float, mode="pandas")
+def month_sin(month):
+    return np.sin(month * (2 * np.pi / 12))
+
+
+@udf(return_type=float, mode="pandas")
+def month_cos(month):
+    return np.cos(month * (2 * np.pi / 12))
