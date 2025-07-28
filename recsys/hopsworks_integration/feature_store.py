@@ -91,3 +91,20 @@ def create_interactions_feature_group(fs, df, online_enabled=True):
         interactions_fg.update_feature_description(desc["name"], desc["description"])
 
     return interactions_fg
+
+
+def create_ranking_feature_group(fs, df, parents, online_enabled=True):
+    rank_fg = fs.get_or_create_feature_group(
+        name="ranking",
+        version=1,
+        description="Derived feature group for ranking",
+        primary_key=["customer_id", "article_id"],
+        parents=parents,
+        online_enabled=online_enabled,
+    )
+    rank_fg.insert(df, wait=True)
+
+    for desc in constants.ranking_feature_descriptions:
+        rank_fg.update_feature_description(desc["name"], desc["description"])
+
+    return rank_fg

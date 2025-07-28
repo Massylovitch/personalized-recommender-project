@@ -166,3 +166,33 @@ interactions_feature_descriptions = [
         "description": "Previous article that the customer interacted with, useful for sequential recommendation patterns.",
     },
 ]
+
+ranking_feature_descriptions = [
+    {"name": "customer_id", "description": "Unique identifier for each customer."},
+    {"name": "article_id", "description": "Identifier for the purchased article."},
+    {"name": "age", "description": "Age of the customer."},
+    {"name": "product_type_name", "description": "Name of the product type."},
+    {"name": "product_group_name", "description": "Name of the product group."},
+    {
+        "name": "graphical_appearance_name",
+        "description": "Name of the graphical appearance.",
+    },
+    {"name": "colour_group_name", "description": "Name of the colour group."},
+    {
+        "name": "perceived_colour_value_name",
+        "description": "Name of the perceived colour value.",
+    },
+    {
+        "name": "perceived_colour_master_name",
+        "description": "Name of the perceived colour master.",
+    },
+    {"name": "department_name", "description": "Name of the department."},
+    {"name": "index_name", "description": "Name of the index."},
+    {"name": "index_group_name", "description": "Name of the index group."},
+    {"name": "section_name", "description": "Name of the section."},
+    {"name": "garment_group_name", "description": "Name of the garment group."},
+    {
+        "name": "label",
+        "description": "Label indicating whether the article was purchased (1) or not (0).",
+    },
+]
