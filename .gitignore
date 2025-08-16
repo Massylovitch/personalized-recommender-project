@@ -3,3 +3,5 @@
 *.pb
 variables/
 *.json
+catboost_info/
+*.pkl
