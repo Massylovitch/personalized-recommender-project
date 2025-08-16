@@ -1,4 +1,5 @@
 import tensorflow as tf
+from loguru import logger
 
 
 class QueryModelModule(tf.Module):
@@ -101,3 +102,24 @@ class HopsworksCandidateModel:
 
         # Save the candidate_model to the Model Registry
         mr_candidate_model.save(local_model_path)  # Path to save the model
+
+    @classmethod
+    def download(cls, mr):
+        models = mr.get_models(name="candidate_model")
+        if len(models) == 0:
+            raise RuntimeError(
+                "No 'candidate_model' found in Hopsworks model registry."
+            )
+        latest_model = max(models, key=lambda m: m.version)
+
+        logger.info(f"Downloading 'candidate_model' version {latest_model.version}")
+        model_path = latest_model.download()
+
+        candidate_model = tf.saved_model.load(model_path)
+
+        candidate_features = [
+            *candidate_model.signatures["serving_default"]
+            .structured_input_signature[-1]
+            .keys()
+        ]
+        return candidate_model, candidate_features

@@ -182,3 +182,35 @@ def create_ranking_feature_views(fs):
     )
 
     return feature_view_ranking
+
+
+def create_candidate_embeddings_feature_group(fs, df, online_enabled=True):
+    embedding_index = embedding.EmbeddingIndex()
+
+    embedding_index.add_embedding(
+        "embeddings",
+        settings.TWO_TOWER_MODEL_EMBEDDING_SIZE,
+    )
+
+    candidate_embeddings_fg = fs.get_or_create_feature_group(
+        name="candidate_embeddings",
+        embedding_index=embedding_index,  # Specify the Embedding Index
+        primary_key=["article_id"],
+        version=1,
+        description="Embeddings for each article.",
+        online_enabled=online_enabled,
+    )
+    candidate_embeddings_fg.insert(df, wait=True)
+
+    return candidate_embeddings_fg
+
+
+def create_candidate_embeddings_feature_view(fs, fg):
+    feature_view = fs.get_or_create_feature_view(
+        name="candidate_embeddings",
+        version=1,
+        description="Embeddings of each article",
+        query=fg.select(["article_id"]),
+    )
+
+    return feature_view
