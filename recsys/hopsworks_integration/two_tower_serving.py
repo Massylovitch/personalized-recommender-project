@@ -1,5 +1,11 @@
+import os
+
 import tensorflow as tf
 from loguru import logger
+
+import hopsworks
+from recsys.config import settings
+from hsml.transformer import Transformer
 
 
 class QueryModelModule(tf.Module):
@@ -72,6 +78,76 @@ class HopsworksQueryModel:
 
         # Save the query_model to the Model Registry
         mr_query_model.save(local_model_path)  # Path to save the model
+
+    @classmethod
+    def deploy(cls, ranking_model_type="ranking"):
+        # Prepare secrets used in the deployment
+        project = hopsworks.login()
+        cls._prepare_secrets(ranking_model_type)
+
+        mr = project.get_model_registry()
+        dataset_api = project.get_dataset_api()
+
+        # Retrieve the 'query_model' from the Model Registry
+        query_model = mr.get_model(
+            name="query_model",
+            version=1,
+        )
+
+        # Copy transformer file into Hopsworks File System
+        uploaded_file_path = dataset_api.upload(
+            str(settings.RECSYS_DIR / "inference" / "query_transformer.py"),
+            "Models",
+            overwrite=True,
+        )
+
+        # Construct the path to the uploaded script
+        transformer_script_path = os.path.join(
+            "/Projects",
+            project.name,
+            uploaded_file_path,
+        )
+
+        query_model_transformer = Transformer(
+            script_file=transformer_script_path,
+            resources={
+                "num_instances": 0,
+                "requests": {"cores": 0.5},
+                "limits": {"cores": 0.5},
+            },
+        )
+
+        # Deploy the query model
+        query_model_deployment = query_model.deploy(
+            name=cls.deployment_name,
+            description="Deployment that generates query embeddings from customer and item features using the query model",
+            resources={
+                "num_instances": 0,
+                "requests": {"cores": 0.5},
+                "limits": {"cores": 0.5},
+            },
+            transformer=query_model_transformer,
+        )
+
+        return query_model_deployment
+
+    @classmethod
+    def _prepare_secrets(cls, ranking_model_type):
+        project = hopsworks.login(
+            hostname_verification=False,
+            api_key_value=settings.HOPSWORKS_API_KEY.get_secret_value(),
+        )
+        secrets_api = hopsworks.get_secrets_api()
+        secrets = secrets_api.get_secrets()
+        existing_secret_keys = [secret.name for secret in secrets]
+        if "RANKING_MODEL_TYPE" in existing_secret_keys:
+            secrets_api._delete(name="RANKING_MODEL_TYPE")
+
+        secrets_api.create_secret(
+            "RANKING_MODEL_TYPE",
+            ranking_model_type,
+            project=project.name,
+        )
 
 
 class HopsworksCandidateModel:
