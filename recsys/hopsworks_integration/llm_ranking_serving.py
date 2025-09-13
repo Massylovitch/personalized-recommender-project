@@ -62,7 +62,11 @@ class HopsworksLLMRankingModel:
 
         ranking_transformer = Transformer(
             script_file=transformer_script_path,
-            resources={"num_instances": 0},
+            resources={
+                "num_instances": 0,
+                "requests": {"cores": 0.5},
+                "limits": {"cores": 0.5},
+            },
         )
 
         # Deploy ranking model
@@ -71,7 +75,11 @@ class HopsworksLLMRankingModel:
             description="Deployment that search for item candidates and scores them based on customer metadata using "
             "GPT 4",
             script_file=predictor_script_path,
-            resources={"num_instances": 0},
+            resources={
+                "num_instances": 0,
+                "requests": {"cores": 0.5},
+                "limits": {"cores": 0.5},
+            },
             transformer=ranking_transformer,
             environment=settings.CUSTOM_HOPSWORKS_INFERENCE_ENV,
         )
