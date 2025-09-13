@@ -23,6 +23,8 @@ torchaudio = {version = "^2.8.0+cu129", source = "pytorch-gpu"}
 tensorflow-recommenders = "0.7.2"
 matplotlib = "^3.10.5"
 catboost = "^1.2.8"
+langchain = "^0.3.27"
+langchain-openai = "^0.3.32"
 
 
 [[tool.poetry.source]]

@@ -16,6 +16,9 @@ class Settings(BaseSettings):
     RECSYS_DIR: Path = Path(__file__).parent
     HOPSWORKS_API_KEY: SecretStr | None = None
 
+    OPENAI_MODEL_ID: str = "gpt-4o-mini"
+    OPENAI_API_KEY: SecretStr | None = None
+
     CUSTOMER_DATA_SIZE: CustomerDatasetSize = CustomerDatasetSize.SMALL
     FEATURES_EMBEDDING_MODEL_ID: str = "all-MiniLM-L6-v2"
 
